@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}
+Order Monitoring
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script>
+setInterval(function() {
+				  if (!$('#myModal').is(':visible'))
+					{window.location.reload();}
+				}, 60000);
+</script>
+<script type="text/javascript">
+	$('#myModal').on('shown.bs.modal', function () {
+		$('#myInput').trigger('focus')
+	})
+</script>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+<!-- <h1>{{ title }}</h1> -->
+
+<div class="row">
+  <div class="col-md-6">
+	  <h3>Enquiries</h3>
+		{% if enquiries %}
+		<table class="table table-sm table-striped" style="font-size: 12px;">
+			<thead>
+				<tr>
+					<!-- <td title="(HH:MM:SS)">Time Left </td> -->
+					<th>Customer</th>
+					<th>Site</th>
+					<th>Contact</th>
+					<th>Follow-Up Date</th>
+					<th>Priority</th>
+				</tr>
+			</thead>
+			{% for row in enquiries%}
+			<tr>
+				<td>{{ row.customer }}</td>
+				<td>{{ row.site }}</td>
+				<td><button style="font-size: 12px;" data-toggle="modal" data-target="#modal{{row.id}}" class="btn btn-link">{{ row.contact_name }}</button></td>
+				<td>{{ row.follow_up_date.strftime('%d-%m-%Y') }}</td>
+				{% if row.priority == 1 %}
+				<th style="color: red;">{{ row.priority|replace("1", "High") }}</th>
+					{% else %}
+						{% if row.priority == 2 %}
+						<th style="color: #ff8300;">{{ row.priority|replace("2", "Medium")}}</th>
+						{% else %}
+						<th style="color: green;">{{ row.priority|replace("3", "Low") }}</th>
+						{% endif %}					
+					{% endif %}
+				<!-- <td>
+					<a class="openTimelineModal">
+					<script type="text/javascript">
+						document.write('{{ row[6] }}'); 
+					</script>
+				  </a>
+				</td> -->
+			</tr>
+			<!-- Modal -->
+			<div class="modal fade" id="modal{{row.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Contact Information - {{row.contact_name}}</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<img src="/static/images/contact.png" style="float: right; width: 20%;">
+							<b>Customer:</b> {{row.customer}}<br>
+							<b>Contact Name:</b> {{row.contact_name }}<br>
+							<b>Contact No:</b> {{row.contact_number}}<br>
+							<b>Contact email:</b> {{row.contact_email}}
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+		</table>
+		{% else %}
+			No data to show
+		{% endif %}
+  </div>
+
+  
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,23 @@
+{% if notification['counter'] > 0 %}
+<script type="text/javascript">
+	$.notify({
+		title: '<strong>Notification</strong><br>',
+		icon: 'glyphicon glyphicon-star',
+		message: "{{notification['notification']}}"
+	},{
+		type: 'info',
+		animate: {
+			enter: 'animated fadeInUp',
+			exit: 'animated fadeOutRight'
+		},
+		placement: {
+			from: "top",
+			align: "right"
+		},
+		offset: 20,
+		spacing: 10,
+		z_index: 1031,
+		delay: 10000,
+	});
+</script>
+{% endif %}

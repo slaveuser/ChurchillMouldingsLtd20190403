@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}New Order Details{% endblock %}
+
+{% block scripts %}
+{{super()}}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+ 
+  <h2>New Order</h2>
+  <form method="POST" action="/newOrder">
+  	<dl>
+  		{{ wtf.quick_form(form) }}
+  		<input class="btn btn-primary" type="submit" value="Login" name="">
+  	</dl>
+  	
+  </form>
+  
+   <br>
+		{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+ 
+		{% for message in messages %}
+			{% if "Error" not in message[1]: %}
+				<div class="alert alert-info">
+				<strong>Success! </strong> {{ message[1] }}
+				</div>
+			{% endif %}
+ 
+			{% if "Error" in message[1]: %}
+				<div class="alert alert-warning">
+				{{ message[1] }}
+				</div>
+			{% endif %}
+		{% endfor %}
+			{% endif %}
+		{% endwith %}
+ 
+</div>
+
+{% endblock %}

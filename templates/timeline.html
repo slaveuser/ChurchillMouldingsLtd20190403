@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}Index{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" type="text/css" href="../static/css/timeline.css">
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script type="text/javascript" src="../static/js/timeline.js"></script>
+{% endblock %}
+
+{% block content %}
+<center>
+	<div style="width: 75%">
+		<div id="timeline">
+			<div class="dot" id=""></div>
+			<div class="dot" id="two">
+				<span></span>
+				<date style="top: -90px; left: -12.5px;">Pre<br>Contract</date>
+			</div>
+			<div class="dot" id="three">
+				<span></span>
+				<date style="left: -12.5px;">Approval</date>
+			</div>
+			<div class="dot" id="four">
+				<span></span>
+				<date style="top: -90px;">Pre<br>Production</date>
+			</div>
+			<div class="dot" id="five">
+				<span></span>
+				<date>Production</date>
+			</div>
+			<div class="dot" id="six">
+				<img class="tick" id="tick" src="../static/images/untick.png">
+			</div>
+			<div class="inside" style="width: 20%"></div>
+		</div>
+	</div>
+</center>
+
+<!-- Modals -->
+<br><br><br>
+<center>
+	<table id="orderInfo" class="table table-sm" style="width: 80%; text-align: center;">
+		<thead>
+			<tr>
+				<th scope="col">Customer Name</th>
+				<th scope="col">Site Name</th>
+				<th scope="col">Site Number</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>{{orderInfo.cust_name}}</td>
+				<td>{{orderInfo.site_name}}</td>
+				<td>{{orderInfo.site_num}}</td>
+			</tr>
+		</tbody>
+	</table>
+</center>
+
+<br>
+<article class='modal two'>
+	<center>
+		<h5>Pre-Contract</h5>
+		<table id="stageInfo" class="table table-sm" style="width: 80%;">
+			<tbody>
+				{% for row in data %}
+					{% if row[0].stage == 1 %}
+						<tr>
+							<td>{{ row[0].substage }}</td>
+							<td>{{ row[1].data }}</td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+			</tbody>
+		</table>
+	</center>
+</article>
+
+<article class='modal three'>
+	<center>
+		<h5>Approval</h5>
+		<table id="stageInfo" class="table table-sm" style="width: 80%;">
+			<tbody>
+				{% for row in data %}
+					{% if row[0].stage == 2 %}
+						<tr>
+							<td>{{ row[0].substage }}</td>
+							<td>{{ row[1].data }}</td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+			</tbody>
+		</table>
+	</center>
+</article>
+
+<article class='modal four'>
+	<center>
+		<h5>Pre-Production</h5>
+		<table id="stageInfo" class="table table-sm" style="width: 80%;">
+			<tbody>
+				{% for row in data %}
+					{% if row[0].stage == 3 %}
+						<tr>
+							<td>{{ row[0].substage }}</td>
+							<td>{{ row[1].data }}</td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+			</tbody>
+		</table>
+	</center>
+</article>
+
+<article class='modal five'>
+	<center>
+		<h5>Production</h5>
+		<table id="stageInfo" class="table table-sm" style="width: 80%;">
+			<tbody>
+				{% for row in data %}
+					{% if row[0].stage == 4 %}
+						<tr>
+							<td>{{ row[0].substage }}</td>
+							<td>{{ row[1].data }}</td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+			</tbody>
+		</table>
+	</center>
+</article>
+{% endblock %}

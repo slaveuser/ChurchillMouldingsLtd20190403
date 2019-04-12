@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}New Enquiry{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<!-- Bootstrap Date-Picker Plugin -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+<link rel="stylesheet" href="../static/css/form.css"/>
+
+<script>
+	$(document).ready(function(){
+      var date_input=$('input[name="follow_up_date"]'); //our date input has the name "follow_up_date"
+      var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+      var options={
+      	format: 'dd/mm/yyyy',
+      	container: container,
+      	todayHighlight: true,
+      	autoclose: true,
+      };
+      date_input.datepicker(options);
+  })
+</script>
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+	<h2>New Enquiry</h2>
+		<form method="POST" class="simple-form" action="/new">
+		<dl>
+
+			<!-- Text input-->
+			<div class="form-group col-md-6" style="padding-left: 0px;">
+				<label for="customer">Customer</label>
+				<input type="text" class="form-control" name="customer" id="customer" placeholder="Required" required>
+			</div>
+
+			<div class="form-row"> 
+				<div class="col">
+					<label for="contact_name">Contact Name</label>
+					<div class="input-group">
+						<input name="contact_name" type="text" class="form-control" id="contact_name" placeholder="Required" required>
+					</div>
+				</div>
+				<div class="col">
+					<label for="contact_number">Contact Number</label>
+					<input name="contact_number" type="text" class="form-control" id="contact_number" optional>
+				</div>
+				<div class="col">
+					<label for="contact_email">Contact Email</label>
+					<input name="contact_email" type="text" class="form-control" id="contact_email">
+				</div>
+			</div>
+
+			<div class="form-row">
+				<div class="col-md-6">
+					<label for="site_name">Site</label>
+					<div class="input-group">
+						<input name="site" type="text" class="form-control" id="site_name">
+					</div>
+				</div>
+				<div class="col-md-6">
+					<label for="site_number">Site Number</label>
+					<input name="site_number" type="text" class="form-control" id="site_number" >
+				</div>
+			</div>
+
+			<div class="form-row"> 
+				<div class="col-md-2" >
+					<label class="control-label" for="follow_up_date">Follow Up Date</label>
+					<input name="follow_up_date" class="form-control" autocomplete="off" id="follow_up_date" name="follow_up_date" placeholder="DD/MM/YYY" type="text"/>
+				</div>
+				<div class="col-md-2" >
+					<label for="priority">Priority</label>
+					<select name="priority" class="form-control" id="priority">
+						<option value="1" style="color: red;">High</option>
+						<option value="2" style="color: orange;" selected="selected">Medium</option>
+						<option value="3" style="color: green;">Low</option>
+					</select>
+				</div>
+
+				<div class="col-md-2" >
+				<label class="control-label" for="logged_by">Logged By</label>
+				<input class="form-control" id="logged_by" name="logged_by" type="text" value="JC" />
+			</div>
+
+				<div class="col-md-6" >
+				<label class="control-label" for="notes">Notes</label>
+				<textarea rows="3" name="notes" class="form-control" id="notes"></textarea>
+			</div>
+		</div>
+			{{ form.hidden_tag() }}
+			<br><center><input class="btn btn-primary" style="border: 0px;" type="submit" value="Submit" name=""></center>
+		</dl>
+
+	</form>
+
+	<br>
+	{% with messages = get_flashed_messages(with_categories=true) %}
+	{% if messages %}
+
+	{% for message in messages %}
+	{% if "Error" not in message[1]: %}
+	<div class="alert alert-info">
+		<strong>Success! </strong> {{ message[1] }}
+	</div>
+	{% endif %}
+
+	{% if "Error" in message[1]: %}
+	<div class="alert alert-warning">
+		{{ message[1] }}
+	</div>
+	{% endif %}
+	{% endfor %}
+	{% endif %}
+	{% endwith %}
+</div>
+
+{% endblock %}

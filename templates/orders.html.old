@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}
+Track Order
+{% endblock %}
+
+{% block content %}
+<div class="container">
+	<h1>Orders</h1>
+	<center>
+		<table class="table table-striped" >
+			<thead>
+				<tr>
+					<td>ID</td>
+					<td>Customer</td>
+					<td>Site</td>
+					<td>Site Number</td>
+					<td>Status</td>
+					<td>Current Stage</td>
+				</tr>
+			</thead>
+			<tbody>
+				{% for row in data %}
+				<tr>
+					<td>{{ row.id }}</td>
+					<td>{{ row.cust_name }}</td>
+					<td>{{ row.site_name }}</td>
+					<td>{{ row.site_num }}</td>
+					{% if row.status == 1 %}
+					<td style="color: green;">LIVE</td>
+					{% else %}
+					<td style="color: red;">ARCHIVED</td>
+					{% endif %}
+					<td>{{ row.current_stage }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</center>
+</div>
+
+
+{% endblock %}

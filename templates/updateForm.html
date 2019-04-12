@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}Update Order Details{% endblock %}
+
+{% block scripts %}
+{{super()}}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+ 
+  <h2>Update Order</h2>
+  <form method="POST" action="">
+  	<dl>
+  		{{ wtf.quick_form(form) }}
+  		<input class="btn btn-primary" type="submit" value="Login" name="">
+  	</dl>
+  	
+  </form>
+  
+   <br>
+		{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+ 
+		{% for message in messages %}
+			{% if "Error" not in message[1]: %}
+				<div class="alert alert-info">
+				<strong>Success! </strong> {{ message[1] }}
+				</div>
+			{% endif %}
+ 
+			{% if "Error" in message[1]: %}
+				<div class="alert alert-warning">
+				{{ message[1] }}
+				</div>
+			{% endif %}
+		{% endfor %}
+			{% endif %}
+		{% endwith %}
+ 
+<script type="text/javascript">
+	// for ()
+	values = [];
+	for (var i = 1; i <= 42; i++) {
+		document.getElementById('q'+i).value = 'data here';
+	}
+</script>
+</div>
+
+{% endblock %}

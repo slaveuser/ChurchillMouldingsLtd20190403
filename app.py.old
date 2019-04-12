@@ -1,0 +1,206 @@
+from flask import Flask, request, render_template, flash, redirect, make_response
+
+from flask_wtf import Form
+from wtforms import StringField, PasswordField, TextField, SelectField
+from wtforms.validators import InputRequired
+
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func 
+
+from flask_bootstrap import Bootstrap
+
+app = Flask(__name__)
+app.secret_key = '\xa3;\xf1G\xf8\x1a\xd1\x81d\x99JW\x16\x98\x7f'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['DEBUG'] = True
+
+db = SQLAlchemy(app)
+bootstrap = Bootstrap(app)
+
+class Orders(db.Model):
+	__tablename__ = "Orders"
+	id = db.Column('id', db.Integer, primary_key=True)
+	current_stage = db.Column('current_stage', db.Integer)
+	status = db.Column('status', db.Integer)
+	cust_name = db.Column('cust_name', db.Text())
+	site_name = db.Column('site_name', db.Text())
+	site_num = db.Column('site_num', db.Text())
+
+	def __repr__(self):
+		return '<Order %r>' % self.id
+
+class Substages(db.Model):
+	__tablename__ = "Substages"
+	id = db.Column('id', db.Integer, primary_key=True)
+	stage = db.Column('stage', db.Integer)
+	substage = db.Column('substage', db.Text())
+
+	def __repr__(self):
+		return '<SubStage %r>' % self.id
+
+class Order_Substages(db.Model):
+	__tablename__ = "Order_Substages"
+	id = db.Column('id', db.Integer, primary_key=True)
+	order_id = db.Column('order_id', db.Integer)
+	substage_id = db.Column('substage_id', db.Integer)
+	stage = db.Column('stage', db.Integer)
+	data = db.Column('data', db.Text())
+
+	# def __repr__(self):
+	#     return '<Order_Substage %r>' % self.id
+
+class newOrderForm(Form):
+	cust_name = TextField('Customer:', validators=[InputRequired()])
+	site_name = TextField('Site:', validators=[InputRequired()])
+	site_num = TextField('Site Number:', validators=[InputRequired()])
+	current_stage = SelectField(
+        'Current Stage',
+        choices=[('1', 'Pre Contract'), ('2', 'Approval'), ('3', 'Pre Production'), ('4', 'Production')]
+    )
+
+# class updateForm(Form):
+	q1 = TextField('Job Detail Drawings Received (Y/N)', validators=[InputRequired()])
+	q2 = TextField('Assigned to', validators=[InputRequired()])
+	q3 = TextField('Quantified by', validators=[InputRequired()])
+	q4 = TextField('Concept Design by', validators=[InputRequired()])
+	q5 = TextField('Estimate Mac Nr', validators=[InputRequired()])
+	q6 = TextField('Estimate Q.B. Nr', validators=[InputRequired()])
+	q7 = TextField('Estimate Date', validators=[InputRequired()])
+	q8 = TextField('Nett Contract Value', validators=[InputRequired()])
+	q9 = TextField('VAT', validators=[InputRequired()])
+	q10 = TextField('Gross Contract Value', validators=[InputRequired()])
+	q11 = TextField('Sample Required (Y/N)', validators=[InputRequired()])
+	q12 = TextField('Sample Approved (Y/N)', validators=[InputRequired()])
+	q13 = TextField('Site Survey Carried Out by', validators=[InputRequired()])
+	q14 = TextField('Customer P.O. Nr', validators=[InputRequired()])
+	q15 = TextField('P.O. Date', validators=[InputRequired()])
+	q16 = TextField('W.O. Mac Nr', validators=[InputRequired()])
+	q17 = TextField('W.O. Q.B. Nr', validators=[InputRequired()])
+	q18 = TextField('W.O. Date', validators=[InputRequired()])
+	q19 = TextField('Order Value', validators=[InputRequired()])
+	q20 = TextField('Proforma Invoice Nr', validators=[InputRequired()])
+	q21 = TextField('Deposit Amount', validators=[InputRequired()])
+	q22 = TextField('Deposit Received Y/N', validators=[InputRequired()])
+	q23 = TextField('Model assigned to', validators=[InputRequired()])
+	q24 = TextField('Description', validators=[InputRequired()])
+	q25 = TextField('Nr of New Models', validators=[InputRequired()])
+	q26 = TextField('Allocated Model Time (hrs)', validators=[InputRequired()])
+	q27 = TextField('Mould Making Assigned to', validators=[InputRequired()])
+	q28 = TextField('Allocated Mould Time (hrs)', validators=[InputRequired()])
+	q29 = TextField('Trimming and Mould Preparation', validators=[InputRequired()])
+	q30 = TextField('Assigned to', validators=[InputRequired()])
+	q31 = TextField('W.O. Signed for (Y/N)', validators=[InputRequired()])
+	q32 = TextField('Generic product ID', validators=[InputRequired()])
+	q33 = TextField('Product ID Description', validators=[InputRequired()])
+	q34 = TextField('General Product Dims', validators=[InputRequired()])
+	q35 = TextField('Quantity', validators=[InputRequired()])
+	q36 = TextField('Due Date', validators=[InputRequired()])
+	q37 = TextField('Fitting Required (Y/N)', validators=[InputRequired()])
+	q38 = TextField('Signed & Completed W.O. Received (Y/N)', validators=[InputRequired()])
+	q39 = TextField('Delivery date', validators=[InputRequired()])
+	q40 = TextField('Deposit Invoice Nr', validators=[InputRequired()])
+	q41 = TextField('Invoice Nr', validators=[InputRequired()])
+	q42 = TextField('Invoice Completely satisfied (Y/N)', validators=[InputRequired()])
+		
+@app.route('/')
+def index():
+	# select live orders, ordered by current stage
+	data = Orders.query.filter(Orders.status==1).order_by(Orders.current_stage.desc())
+
+	return render_template('dashboard.html', data=data)
+
+@app.route('/orders')
+def orders():
+	# select all orders
+	data = Orders.query.all()
+
+	# get last order id looked at
+	recent = request.cookies.get('last')
+
+	# get page before redirect
+	refferer = request.cookies.get('refferer')
+
+	return render_template('orders.html', data=data, recent=recent, refferer=refferer)
+
+@app.route("/new", methods=['GET', 'POST'])
+def newOrder():
+	# form = newOrderForm(request.form)
+	form = newOrderForm()
+ 
+	print form.errors
+	if request.method == 'POST':
+		cust_name=request.form['cust_name']
+		site_name=request.form['site_name']
+		site_num=request.form['site_num']
+		current_stage=request.form['current_stage']
+ 
+		if form.validate():
+			order = Orders(cust_name=cust_name, site_name=site_name, site_num=site_num, status=1, current_stage=current_stage)
+			db.session.add(order)
+			db.session.commit()
+			flash('Order added to database.')
+		else:
+			flash('Error: All the form fields are required. ')
+ 
+	return render_template('newOrderForm.html', form=form)
+
+@app.route('/update')
+def update():
+	id_number = request.args.get('id')
+	# stage = request.args.get('stage')
+
+	if not id_number:
+		return redirect('orders')
+
+	# if not stage:
+		# return redirect('stages')
+
+	form = updateForm()
+	data = (db.session.query(Substages, Order_Substages).filter(Substages.id == Order_Substages.substage_id).filter(Order_Substages.order_id==id_number).all())
+	# data = db.session.query(Substages).all()
+	# print data
+
+	dataDict = {}
+	for row in data:
+		dataDict[row[0].stage] = {}
+	for row in data:
+		dataDict[row[0].stage][row[0].substage] = row[1].data
+
+	# using lists instead of dict
+	# for row in data:
+	# 	dataDict[row.stage] = []
+	# for row in data:
+	# 	dataDict[row.stage].append([row.substage,'x'])
+			
+	# print dataDict
+
+	orderInfo = Orders.query.filter(Orders.id==id_number).all()
+
+	return render_template('updateForm.html', form=form, data=dataDict, info=orderInfo)
+
+@app.route('/timeline')
+def timeline():
+	id_number = request.args.get('id')
+
+	if not id_number:
+		return redirect('orders')
+
+	substages = Substages.query.all()
+	data = (db.session.query(Substages, Order_Substages).filter(Substages.id == Order_Substages.substage_id).filter(Order_Substages.order_id==id_number).all())
+	orderInfo = Orders.query.filter(Orders.id==id_number).all()
+	# print orderInfo[0].id
+	
+	resp = make_response(render_template('timeline.html', substages=substages, data=data, orderInfo=orderInfo[0]))
+	resp.set_cookie('last', str(orderInfo[0].id))
+	resp.set_cookie('refferer', 'timeline')
+	return resp
+	# return render_template('timeline.html', substages=substages, data=data, orderInfo=orderInfo[0])
+
+from views import *
+
+if __name__ == '__main__':
+	#notifies in terminal when server has finished starting
+	print 'Server Started Successfully'
+
+	app.run(host='0.0.0.0', port=5001, threaded=True)

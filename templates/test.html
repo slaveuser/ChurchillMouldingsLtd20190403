@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}
+Track Order
+{% endblock %}
+
+{% block content %}
+<head>
+	<style>
+	#myInput {
+		background-image: url('/static/images/searchIcon.png');
+		background-position: 8px 4px;
+		background-repeat: no-repeat;
+		width: 75%;
+		font-size: 16px;
+		padding-left: 40px;
+		border: 1px solid #ddd;
+		margin-bottom: 12px;
+	}
+
+</style>
+</head>
+
+<body>
+	<div class="container">
+		<h1>Orders</h1>
+		<p>Please choose an order</p>
+
+		<div class="input-group">
+			<input  id="myInput" type="text" onkeyup="myFunction()" placeholder="Search.." class="form-control" aria-label="Text input with dropdown button">
+			<select id="searchParam" class="form-control" id="searchby" name="searchparam">
+				<option value="1">Customer</option>
+				<option value="0">ID</option>
+				<option value="2">Site Name</option>
+				<option value="4">Status</option>
+			</select>
+		</div>
+
+		<table id="myTable" class="table table-striped" >
+			<thead>
+				<tr>
+					<td>ID</td>
+					<td>Customer</td>
+					<td>Site</td>
+					<td>Site Number</td>
+					<td>Status</td>
+					<td>Current Stage</td>
+					<td colspan="2" style="text-align: center;">Operations</td>
+					<!-- <td></td> -->
+				</tr>
+			</thead>
+			<tbody>
+				{% for row in data %}
+				<tr>
+					<td>{{ row.id }}</td>
+					<td>{{ row.cust_name }}</td>
+					<td>{{ row.site_name }}</td>
+					<td>{{ row.site_num }}</td>
+					{% if row.status == 1 %}
+					<td style="color: green;">LIVE</td>
+					{% else %}
+					<td style="color: red;">ARCHIVED</td>
+					{% endif %}
+					<td>{{ row.current_stage }}</td>
+					<td><a href="/timeline/{{row.id}}">Track</a></td>
+					<td><a href="/update/{{row.id}}">Edit</a></td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<script>
+		function myFunction() {
+			var input, filter, table, tr, td, i;
+			input = document.getElementById("myInput");
+			filter = input.value.toUpperCase();
+			table = document.getElementById("myTable");
+			tr = table.getElementsByTagName("tr");
+			col = $( "#searchParam" ).val();
+			for (i = 1; i < tr.length; i++) {
+				td = tr[i].getElementsByTagName("td")[col];
+				if (td) {
+					if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+						tr[i].style.display = "";
+					} else {
+						tr[i].style.display = "none";
+					}
+				}       
+			}
+		}
+	</script>
+
+</body>
+{% endblock %}

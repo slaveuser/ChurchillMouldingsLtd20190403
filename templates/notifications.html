@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}
+Notifications
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<link rel="stylesheet" type="text/css" href="../static/css/notices.css">
+{% endblock %}
+
+
+{% block content %}
+<body>
+
+	<div class="container" style="max-width: 90%;">
+		<h1>Notifications</h1>
+		{% for row in data %}
+			{% if row.priority == 1 %}
+				<div class="notice notice-danger">
+					<strong>New enquiry</strong> logged by {{row.logged_by}} on {{row.datetime.strftime('%d-%m-%Y')}} with high priority
+				</div>
+			{% else %}
+				{% if row.priority == 2 %}
+					<div class="notice notice-warning">
+						<strong>New enquiry</strong> logged by {{row.logged_by}} on {{row.datetime.strftime('%d-%m-%Y')}} with medium priority
+					</div>
+				{% else %}
+					<div class="notice notice-info">
+						<strong>New enquiry</strong> logged by {{row.logged_by}} on {{row.datetime.strftime('%d-%m-%Y')}} with low priority
+					</div>
+				{% endif %}					
+			{% endif %}	
+		{% endfor %}
+
+	</div>
+
+</body>
+{% endblock %}
